@@ -4,11 +4,17 @@ import {ApiRequestControlType} from "../types/types";
 import {HTTP_STATUSES} from "../http_statuses";
 import moment from "moment";
 
-const isCheckLastDate = (date:Date) => {
+enum CONTROL_SETTINGS {
+    AMOUNT_TRY = 5,
+    TIME_FOR_NEXT_TRY = 10
+}
+
+
+const isCheckLastDate = (date: Date) => {
     const currentDate = moment(new Date());
     const checkDate = moment(date);
     const seconds = currentDate.diff(checkDate, 'seconds');
-    return seconds < 10
+    return seconds < CONTROL_SETTINGS.TIME_FOR_NEXT_TRY
 }
 
 
@@ -28,6 +34,7 @@ export const DDOSControlMiddleware = async (req: Request, res: Response, next: N
         await apiControlRepository.createRecord(newRecord)
         return next()
     }
+
     const isHaveEndpoint = isHaveRecord.requestControl.find(el => el.endpoint === req.originalUrl)
 
     if (!isHaveEndpoint) {
@@ -40,16 +47,19 @@ export const DDOSControlMiddleware = async (req: Request, res: Response, next: N
         await apiControlRepository.updateRecord({api: req.ip}, {$set: {requestControl: isHaveRecord.requestControl}})
         return next()
     }
-    const a = isCheckLastDate(isHaveEndpoint.lastEntryDate)
-    if (isHaveEndpoint.amountTry > 5 &&  a) {
+
+    const isEnoughTimeForNextTry = isCheckLastDate(isHaveEndpoint.lastEntryDate);
+
+    if (isHaveEndpoint.amountTry >= CONTROL_SETTINGS.AMOUNT_TRY && isEnoughTimeForNextTry) {
         return res.sendStatus(HTTP_STATUSES.TOO_MANY_REQUESTS_429)
     }
+
     const updatedRequestControl = isHaveRecord.requestControl.map(el => el.endpoint === req.originalUrl
-        ? {...el, amountTry: a ? 0 : ++el.amountTry, lastEntryDate: new Date()}
+        ? {...el, amountTry: isEnoughTimeForNextTry ? ++el.amountTry : 1, lastEntryDate: new Date()}
         : el
     )
 
-    await apiControlRepository.updateRecord({api: req.ip}, {$set: {requestControl: updatedRequestControl}})
+    await apiControlRepository.updateRecord({api: req.ip}, {$set: {requestControl: updatedRequestControl}});
 
-    next()
+    next();
 };

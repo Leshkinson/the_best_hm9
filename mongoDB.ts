@@ -3,7 +3,7 @@ import dotenv from 'dotenv'
 import {
     ApiRequestControlType,
     BlogResponseType,
-    PostResponseType,
+    PostResponseType, SessionType,
     UserFromDBType,
 } from "./src/types/types";
 
@@ -18,6 +18,7 @@ export const userCollections = myDB.collection<UserFromDBType>("users")
 export const commentCollections = myDB.collection<any>("comments")
 export const usedRefreshCollections = myDB.collection<any>("usedRefresh")
 export const requestControlCollections = myDB.collection<ApiRequestControlType>("requestControl")
+export const sessionsCollections = myDB.collection<SessionType>("sessions")
 export async function runDB() {
     try {
         await client.connect()

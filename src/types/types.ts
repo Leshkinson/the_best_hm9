@@ -128,3 +128,10 @@ export type ApiRequestControlType = {
     api: string
     requestControl: RequestControlsType[]
 }
+
+export type SessionType = {
+    ip: string
+    title: string
+    lastActiveDate: string
+    deviceId: string
+}
