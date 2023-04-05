@@ -18,8 +18,8 @@ authRouter.get('/me', authMiddleware, authController.getMe)
 //-------------------POST---------------//
 authRouter.post('/refresh-token', checkIsRefreshTokenValid, authController.refreshToken)
 authRouter.post('/login', authValidation, DDOSControlMiddleware, checkIsValidUser, inputValidationMiddleware, authController.authorization)
-authRouter.post('/registration', registrationValidate,  inputValidationMiddleware, authController.registration)
-authRouter.post('/registration-confirmation', checkCodeValidation, inputValidationMiddleware, authController.registrationConfirmation)
-authRouter.post('/registration-email-resending', regEmailResendValidation, inputValidationMiddleware, authController.regEmailResend)
+authRouter.post('/registration', registrationValidate, DDOSControlMiddleware, inputValidationMiddleware, authController.registration)
+authRouter.post('/registration-confirmation', checkCodeValidation, DDOSControlMiddleware, inputValidationMiddleware, authController.registrationConfirmation)
+authRouter.post('/registration-email-resending', regEmailResendValidation, DDOSControlMiddleware, inputValidationMiddleware, authController.regEmailResend)
 authRouter.post('/logout', checkIsRefreshTokenValid, authController.logout)
 
