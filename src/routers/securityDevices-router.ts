@@ -1,5 +1,6 @@
 import {Router} from "express";
 import {securityDevicesController} from "../controllers/securityDevices-controller";
+import {checkIsRefreshTokenValid} from "../middleware/checkIsRefreshTokenValid";
 
 
 export const securityDevicesRouter = Router({})
@@ -8,5 +9,5 @@ export const securityDevicesRouter = Router({})
 securityDevicesRouter.get('/', securityDevicesController.getAllActiveSessions)
 
 //-------------------DELETE---------------//
-securityDevicesRouter.delete('/', securityDevicesController.removeOtherSessions)
+securityDevicesRouter.delete('/', checkIsRefreshTokenValid, securityDevicesController.removeOtherSessions)
 securityDevicesRouter.delete('/:id', securityDevicesController.removeSession)
