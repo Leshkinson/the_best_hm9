@@ -1,5 +1,3 @@
-import {UserFromDBType} from "../types/types";
-
 
 export const securityDevicesModel = (session: any) => {
     const sessionConverter = (session: any) => {

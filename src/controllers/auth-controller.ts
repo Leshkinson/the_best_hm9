@@ -3,6 +3,7 @@ import {HTTP_STATUSES} from "../http_statuses";
 import {jwtService} from "../application/jwt-service";
 import {authService} from "../services/auth-service";
 import {securityDevicesRepository} from "../repositories/securityDevices-repository";
+import {securityDevicesService} from "../services/securityDevices-service";
 
 export const authController = {
 
@@ -31,7 +32,7 @@ export const authController = {
             const [accessToken, refreshNewToken] = await authService.refreshToken(userId, refreshToken, deviceId)
             // @ts-ignore
             const {lastUpdateDate} = await jwtService.decodeReFreshToken(refreshNewToken.refreshToken)
-            await securityDevicesRepository.updateSession({deviceId}, {$set : {lastUpdateDate}} )
+            await securityDevicesRepository.updateSession({deviceId}, {$set: {lastUpdateDate}})
             return res.status(HTTP_STATUSES.OK200).cookie('refreshToken', refreshNewToken, {
                 httpOnly: true,
                 secure: true
@@ -60,7 +61,8 @@ export const authController = {
         const decodedToken = await jwtService.decodeReFreshToken(refreshToken)
 
         if (decodedToken) {
-            await authService.saveUsedToken(refreshToken)
+            const {deviceId} = decodedToken
+            await securityDevicesService.removeSession(deviceId)
             return res.clearCookie('refreshToken').sendStatus(HTTP_STATUSES.NO_CONTENT_204)
         }
 
