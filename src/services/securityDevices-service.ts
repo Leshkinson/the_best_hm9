@@ -1,12 +1,14 @@
 import {securityDevicesRepository} from "../repositories/securityDevices-repository";
 import {jwtService} from "../application/jwt-service";
+import {securityDevicesModel} from "../models/securityDevices-model";
 
 
 export const securityDevicesService = {
 
     async getActiveSessions() {
         const filter = {}
-        return await securityDevicesRepository.getAllUserSessions(filter)
+        const sessions =  await securityDevicesRepository.getAllUserSessions(filter)
+        return securityDevicesModel(sessions)
     },
 
     async removeOtherSessions(refreshToken: string) {
