@@ -2,30 +2,36 @@ import {Request, Response} from "express";
 import {HTTP_STATUSES} from "../http_statuses";
 import {jwtService} from "../application/jwt-service";
 import {authService} from "../services/auth-service";
+import {securityDevicesRepository} from "../repositories/securityDevices-repository";
 
 export const authController = {
 
     async getMe(req: Request, res: Response) {
         if (req.content.user) {
-          const user =  await  authService.getMe(req.content.user)
+            const user = await authService.getMe(req.content.user)
             res.status(HTTP_STATUSES.OK200).send(user)
         }
     },
 
     async authorization(req: Request, res: Response) {
-        const [accessToken, refreshToken] =  await authService.createdAccessAndRefreshTokens(req.content.user)
+        const title = req.headers["user-agent"] || ''
+        const [accessToken, refreshToken] = await authService.authorization(req.content.user, req.ip, title)
         res.status(HTTP_STATUSES.OK200).cookie('refreshToken', refreshToken, {
             httpOnly: true,
             secure: true
         }).send(accessToken)
     },
 
-
     async refreshToken(req: Request, res: Response) {
         const {refreshToken} = req.cookies.refreshToken;
-        const userId = await jwtService.decodeReFreshToken(refreshToken)
-        if (userId) {
-            const [accessToken, refreshNewToken] = await authService.refreshToken(userId, refreshToken)
+        const decodedOldToken = await jwtService.decodeReFreshToken(refreshToken)
+
+        if (decodedOldToken) {
+            const {userId, deviceId} = decodedOldToken
+            const [accessToken, refreshNewToken] = await authService.refreshToken(userId, refreshToken, deviceId)
+            // @ts-ignore
+            const {lastUpdateDate} = await jwtService.decodeReFreshToken(refreshNewToken.refreshToken)
+            await securityDevicesRepository.updateSession({deviceId}, {$set : {lastUpdateDate}} )
             return res.status(HTTP_STATUSES.OK200).cookie('refreshToken', refreshNewToken, {
                 httpOnly: true,
                 secure: true
@@ -50,14 +56,14 @@ export const authController = {
     },
 
     async logout(req: Request, res: Response) {
-         const {refreshToken} = req.cookies.refreshToken;
+        const {refreshToken} = req.cookies.refreshToken;
+        const decodedToken = await jwtService.decodeReFreshToken(refreshToken)
 
-        const userId = await jwtService.decodeReFreshToken(refreshToken)
-        if (!userId) {
-            return res.sendStatus(HTTP_STATUSES.UNAUTHORIZED_401);
+        if (decodedToken) {
+            await authService.saveUsedToken(refreshToken)
+            return res.clearCookie('refreshToken').sendStatus(HTTP_STATUSES.NO_CONTENT_204)
         }
 
-        await authService.saveUsedToken(refreshToken)
-        return res.clearCookie('refreshToken').sendStatus(HTTP_STATUSES.NO_CONTENT_204)
+        return res.sendStatus(HTTP_STATUSES.UNAUTHORIZED_401);
     },
 }

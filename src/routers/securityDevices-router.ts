@@ -9,4 +9,4 @@ securityDevicesRouter.get('/', securityDevicesController.getAllActiveSessions)
 
 //-------------------DELETE---------------//
 securityDevicesRouter.delete('/', securityDevicesController.removeOtherSessions)
-securityDevicesRouter.delete('/', securityDevicesController.removeSession)
+securityDevicesRouter.delete('/:id', securityDevicesController.removeSession)

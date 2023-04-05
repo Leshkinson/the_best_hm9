@@ -21,6 +21,5 @@ authRouter.post('/login', authValidation, DDOSControlMiddleware, checkIsValidUse
 authRouter.post('/registration', registrationValidate,  inputValidationMiddleware, authController.registration)
 authRouter.post('/registration-confirmation', checkCodeValidation, inputValidationMiddleware, authController.registrationConfirmation)
 authRouter.post('/registration-email-resending', regEmailResendValidation, inputValidationMiddleware, authController.regEmailResend)
-authRouter.post('/logout', DDOSControlMiddleware, checkIsRefreshTokenValid, authController.logout)
+authRouter.post('/logout', checkIsRefreshTokenValid, authController.logout)
 
-// убрать с логаута DDOSControlMiddleware!!!!!

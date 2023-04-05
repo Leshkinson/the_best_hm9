@@ -6,12 +6,12 @@ import add from 'date-fns/add'
 import {emailManager} from "../application/emailManager";
 import {userRepository} from "../repositories/user-repositpry";
 import {getTextForRegistration} from "../utils/getTextForRegistration";
-import {usedRefreshRepository} from "../repositories/usedRefresh-repository";
 import {jwtService} from "../application/jwt-service";
+import {securityDevicesRepository} from "../repositories/securityDevices-repository";
 
 export const authService = {
 
-    async getMe(user:any){
+    async getMe(user: any) {
         return {
             "email": user.accountData.email,
             "login": user.accountData.userName,
@@ -19,9 +19,23 @@ export const authService = {
         }
     },
 
-    async createdAccessAndRefreshTokens(user: any){
+    async authorization(user: any, ip: string, title: string) {
+        const deviceId = uuidv4()
+
+        const [accessToken, refreshToken] = await authService.createdAccessAndRefreshTokens(user, deviceId)
+        // @ts-ignore
+        const {lastUpdateDate} = await jwtService.decodeReFreshToken(refreshToken?.refreshToken)
+        const session = {title, ip, lastActiveDate: new Date().toISOString(), deviceId, userId: user.id, lastUpdateDate}
+
+        await securityDevicesRepository.addedSession(session)
+
+
+        return [accessToken, refreshToken]
+    },
+
+    async createdAccessAndRefreshTokens(user: any, deviceId: string) {
         const accessToken = await jwtService.createAccessToken(user)
-        const refreshToken = await jwtService.createRefreshToken(user)
+        const refreshToken = await jwtService.createRefreshToken(user, deviceId)
         return [accessToken, refreshToken]
     },
 
@@ -48,7 +62,6 @@ export const authService = {
             }
         }
         const text = getTextForRegistration(generatedCode)
-
 
         await emailManager.sendEmailConfirmationMessage(userData.email, "DmitriСorporate", text)
         await userRepository.createUser(newUser)
@@ -89,20 +102,20 @@ export const authService = {
         return false
     },
 
-    async refreshToken(userId: any, oldRefreshToken: string){
+    async refreshToken(userId: any, oldRefreshToken: string, deviceId: any) {
         const user = {id: userId}
-        await authService.saveUsedToken(oldRefreshToken)
-        return await authService.createdAccessAndRefreshTokens(user)
+        //await authService.saveUsedToken(oldRefreshToken)
+        return await authService.createdAccessAndRefreshTokens(user, deviceId)
     },
 
     async saveUsedToken(token: any): Promise<void> {
         const tokenObj = {refreshToken: token}
-        await usedRefreshRepository.saveUsedToken(tokenObj)
+       // await usedRefreshRepository.saveUsedToken(tokenObj)
     },
-
-    async findUsedToken(refreshToken: any): Promise<boolean> {
-        const filter = {refreshToken}
-        const isTokenUsed = await usedRefreshRepository.findUsedToken(filter)
-        return !!isTokenUsed
-    }
+    //
+    // async findUsedToken(refreshToken: any): Promise<boolean> {
+    //     const filter = {refreshToken}
+    //     const isTokenUsed = await usedRefreshRepository.findUsedToken(filter)
+    //     return !!isTokenUsed
+    // }
 }

@@ -1,6 +1,7 @@
 import {NextFunction, Request, Response} from "express";
 import {HTTP_STATUSES} from "../http_statuses";
-import {authService} from "../services/auth-service";
+import {jwtService} from "../application/jwt-service";
+import {securityDevicesRepository} from "../repositories/securityDevices-repository";
 
 
 export const checkIsRefreshTokenValid = async (req: Request, res: Response, next: NextFunction) => {
@@ -8,6 +9,17 @@ export const checkIsRefreshTokenValid = async (req: Request, res: Response, next
     if (!refreshToken) {
         return res.sendStatus(HTTP_STATUSES.UNAUTHORIZED_401);
     }
-    const isTokenUsed = await authService.findUsedToken(refreshToken.refreshToken);
-    return isTokenUsed ? res.sendStatus(HTTP_STATUSES.UNAUTHORIZED_401) : next();
+    const decodedToken = await jwtService.decodeReFreshToken(refreshToken.refreshToken)
+
+    if (!decodedToken) {
+        return res.sendStatus(HTTP_STATUSES.UNAUTHORIZED_401);
+    }
+    const {deviceId, lastUpdateDate} = decodedToken
+
+    const isHaveSession = await securityDevicesRepository.getAllUserSessions({deviceId})
+    if(!isHaveSession || isHaveSession?.lastUpdateDate !== lastUpdateDate){
+        return res.sendStatus(HTTP_STATUSES.UNAUTHORIZED_401);
+    }
+
+    return  next();
 };
