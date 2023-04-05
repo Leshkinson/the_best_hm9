@@ -5,7 +5,7 @@ import {HTTP_STATUSES} from "../http_statuses";
 import moment from "moment";
 
 enum CONTROL_SETTINGS {
-    AMOUNT_TRY = 4,
+    AMOUNT_TRY = 5,
     TIME_FOR_NEXT_TRY = 10
 }
 
