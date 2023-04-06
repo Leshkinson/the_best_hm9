@@ -5,10 +5,15 @@ import {securityDevicesModel} from "../models/securityDevices-model";
 
 export const securityDevicesService = {
 
-    async getActiveSessions() {
-        const filter = {}
-        const sessions =  await securityDevicesRepository.getAllUserSessions(filter)
-        return securityDevicesModel(sessions)
+    async getActiveSessions(token: string) {
+       const decodedToken = await jwtService.decodeReFreshToken(token)
+        if(decodedToken){
+            const {userId} = decodedToken
+            const filter = {userId}
+            const sessions =  await securityDevicesRepository.getAllUserSessions(filter)
+            return securityDevicesModel(sessions)
+        }
+      return null
     },
 
     async removeOtherSessions(refreshToken: string) {
