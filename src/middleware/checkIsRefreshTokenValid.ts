@@ -14,10 +14,12 @@ export const checkIsRefreshTokenValid = async (req: Request, res: Response, next
     if (!decodedToken) {
         return res.sendStatus(HTTP_STATUSES.UNAUTHORIZED_401);
     }
+
     const {deviceId, lastUpdateDate} = decodedToken
 
     const isHaveSession = await securityDevicesRepository.getAllUserSessions({deviceId})
-    if(!isHaveSession || isHaveSession?.lastUpdateDate !== lastUpdateDate){
+
+    if(!isHaveSession || isHaveSession[0].lastUpdateDate !== lastUpdateDate){
         return res.sendStatus(HTTP_STATUSES.UNAUTHORIZED_401);
     }
 

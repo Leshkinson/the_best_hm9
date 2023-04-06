@@ -17,13 +17,13 @@ const refreshTokenParser = {
 export const jwtService = {
 
     async createAccessToken(user: any) {
-        const accessToken = jwt.sign({userId: user.id}, accessTokenSecret, {expiresIn: '10s'}) // Вернуть время обратно!!!
+        const accessToken = jwt.sign({userId: user.id}, accessTokenSecret, {expiresIn: '1d'}) // Вернуть время обратно!!!
         return {accessToken}
     },
 
     async createRefreshToken(user: any, deviceId: string) {
         const payload = refreshTokenParser.pars(user.id, deviceId)
-        const refreshToken = jwt.sign({payload}, refreshTokenSecret, {expiresIn: '20s'});
+        const refreshToken = jwt.sign({payload}, refreshTokenSecret, {expiresIn: '2d'});
         return {refreshToken}
     },
 
