@@ -26,9 +26,8 @@ export const authService = {
         // @ts-ignore
         const {lastUpdateDate} = await jwtService.decodeReFreshToken(refreshToken?.refreshToken)
         const session = {title, ip, lastActiveDate: new Date().toISOString(), deviceId, userId: user.id, lastUpdateDate}
-
+        console.log('session in autharization', session)
         await securityDevicesRepository.addedSession(session)
-
 
         return [accessToken, refreshToken]
     },

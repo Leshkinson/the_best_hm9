@@ -6,7 +6,7 @@ import {checkIsRefreshTokenValid} from "../middleware/checkIsRefreshTokenValid";
 export const securityDevicesRouter = Router({})
 
 //-------------------GET---------------//
-securityDevicesRouter.get('/',checkIsRefreshTokenValid,  securityDevicesController.getAllActiveSessions)
+securityDevicesRouter.get('/',checkIsRefreshTokenValid, securityDevicesController.getAllActiveSessions)
 
 //-------------------DELETE---------------//
 securityDevicesRouter.delete('/', checkIsRefreshTokenValid, securityDevicesController.removeOtherSessions)
