@@ -8,10 +8,10 @@ import {securityDevicesRepository} from "../repositories/securityDevices-reposit
 export const testingController = {
 
     async clearDB() {
-        await blogRepository.deleteAllBlogs()
-        await postRepository.deleteAllPosts()
-        await userRepository.deleteAllUser()
-        await commentRepository.deleteAllComment()
-        await securityDevicesRepository.removeAllSessions()
+        // await blogRepository.deleteAllBlogs()
+        // await postRepository.deleteAllPosts()
+        // await userRepository.deleteAllUser()
+        // await commentRepository.deleteAllComment()
+        // await securityDevicesRepository.removeAllSessions()
     }
 }

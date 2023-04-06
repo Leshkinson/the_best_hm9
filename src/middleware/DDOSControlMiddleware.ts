@@ -53,7 +53,7 @@ export const DDOSControlMiddleware = async (req: Request, res: Response, next: N
     if (isHaveEndpoint.amountTry >= CONTROL_SETTINGS.AMOUNT_TRY && isEnoughTimeForNextTry) {
         return res.sendStatus(HTTP_STATUSES.TOO_MANY_REQUESTS_429)
     }
-    console.log('isEnoughTimeForNextTry', isEnoughTimeForNextTry)
+
     const updatedRequestControl = isHaveRecord.requestControl.map(el => el.endpoint === req.originalUrl
         ? {...el, amountTry: isEnoughTimeForNextTry ? ++el.amountTry : 1,  lastEntryDate: isEnoughTimeForNextTry ? el.lastEntryDate : new Date()}
         : el

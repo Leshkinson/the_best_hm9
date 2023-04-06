@@ -20,6 +20,7 @@ export const userController = {
             email: req.query.searchEmailTerm as string || ""
         }
         const users = await userService.getAllUsers(query)
+        console.log('users', users)
         res.status(HTTP_STATUSES.OK200).send(users)
     },
 
