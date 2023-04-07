@@ -1,8 +1,5 @@
 import {NextFunction, Request, Response} from "express";
 import NodeCache from "node-cache";
-import {apiControlRepository} from "../repositories/api-control-repository";
-import {ApiRequestControlType} from "../types/types";
-import {HTTP_STATUSES} from "../http_statuses";
 import moment from "moment";
 
 enum CONTROL_SETTINGS {
@@ -65,6 +62,7 @@ export const DDOSControlMiddleware = async (req: Request, res: Response, next: N
     // await apiControlRepository.updateRecord({api: req.ip}, {$set: {requestControl: updatedRequestControl}});
     //
     // next();
+
 
     const url = req.url
     const tracker = req.ip;
