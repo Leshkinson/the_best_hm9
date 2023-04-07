@@ -12,6 +12,7 @@ import {securityDevicesRouter} from "./src/routers/securityDevices-router";
 export const app = express()
 
 //---USE---//
+app.set('trust proxy', true)
 app.use(bodyParser.json())
 app.use(cookieParser())
 app.use('/posts', postsRouter)
@@ -21,7 +22,6 @@ app.use('/auth', authRouter)
 app.use('/comments', commentRouter)
 app.use('/security/devices', securityDevicesRouter)
 //---SET---//
-app.set('trust proxy', true)
 
 //---TEST---//
 app.use('/testing', testingRouter)

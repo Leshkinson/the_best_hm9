@@ -6,9 +6,14 @@ import {HTTP_STATUSES} from "../http_statuses";
 export const securityDevicesController = {
 
     async getAllActiveSessions(req: Request, res: Response) {
-        const {refreshToken} = req.cookies.refreshToken;
-        const sessions = await securityDevicesService.getActiveSessions(refreshToken)
-        res.status(HTTP_STATUSES.OK200).json(sessions)
+        try {
+            const {refreshToken} = req.cookies.refreshToken;
+            const sessions = await securityDevicesService.getActiveSessions(refreshToken)
+            res.status(HTTP_STATUSES.OK200).json(sessions)
+        } catch (error) {
+            if (error instanceof Error)
+            console.log(error.message)
+        }
     },
 
     async removeOtherSessions(req: Request, res: Response) {
