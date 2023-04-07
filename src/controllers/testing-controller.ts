@@ -12,6 +12,6 @@ export const testingController = {
         await postRepository.deleteAllPosts()
         await userRepository.deleteAllUser()
         await commentRepository.deleteAllComment()
-        await securityDevicesRepository.removeAllSessions()
+        //await securityDevicesRepository.removeAllSessions()
     }
 }
