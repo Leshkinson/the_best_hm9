@@ -9,10 +9,11 @@ export const securityDevicesController = {
         try {
             const {refreshToken} = req.cookies.refreshToken;
             const sessions = await securityDevicesService.getActiveSessions(refreshToken)
-            res.status(HTTP_STATUSES.OK200).json(sessions)
+            return res.status(HTTP_STATUSES.OK200).json(sessions)
         } catch (error) {
             if (error instanceof Error)
             console.log(error.message)
+            return res.sendStatus(HTTP_STATUSES.UNAUTHORIZED_401);
         }
     },
 
