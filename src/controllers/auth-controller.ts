@@ -18,10 +18,13 @@ export const authController = {
         const title = req.headers["user-agent"] || ''
         console.log('user in authcontroller', req.content.user)
         const [accessToken, refreshToken] = await authService.authorization(req.content.user, req.ip, title)
-        res.status(HTTP_STATUSES.OK200).cookie('refreshToken', refreshToken, {
+
+        res.cookie('refreshToken', refreshToken, {
             httpOnly: true,
             secure: true
-        }).send(accessToken)
+        })
+
+        res.status(HTTP_STATUSES.OK200).json(accessToken)
     },
 
     async refreshToken(req: Request, res: Response) {
