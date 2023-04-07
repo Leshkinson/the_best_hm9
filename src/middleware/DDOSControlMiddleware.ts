@@ -20,46 +20,46 @@ const isCheckLastDate = (date: Date) => {
 
 export const DDOSControlMiddleware = async (req: Request, res: Response, next: NextFunction) => {
 
-    const isHaveRecord = await apiControlRepository.getRecordByFilter({api: req.ip})
-
-    if (!isHaveRecord) {
-        const newRecord: ApiRequestControlType = {
-            api: req.ip,
-            requestControl: [{
-                endpoint: req.originalUrl,
-                amountTry: 1,
-                lastEntryDate: new Date()
-            }]
-        }
-        await apiControlRepository.createRecord(newRecord)
-        return next()
-    }
-
-    const isHaveEndpoint = isHaveRecord.requestControl.find(el => el.endpoint === req.originalUrl)
-
-    if (!isHaveEndpoint) {
-        isHaveRecord.requestControl.push({
-            endpoint: req.originalUrl,
-            amountTry: 1,
-            lastEntryDate: new Date()
-        })
-
-        await apiControlRepository.updateRecord({api: req.ip}, {$set: {requestControl: isHaveRecord.requestControl}})
-        return next()
-    }
-
-    const isEnoughTimeForNextTry = isCheckLastDate(isHaveEndpoint.lastEntryDate);
-
-    if (isHaveEndpoint.amountTry >= CONTROL_SETTINGS.AMOUNT_TRY && isEnoughTimeForNextTry) {
-        return res.sendStatus(HTTP_STATUSES.TOO_MANY_REQUESTS_429)
-    }
-
-    const updatedRequestControl = isHaveRecord.requestControl.map(el => el.endpoint === req.originalUrl
-        ? {...el, amountTry: isEnoughTimeForNextTry ? ++el.amountTry : 1,  lastEntryDate: isEnoughTimeForNextTry ? el.lastEntryDate : new Date()}
-        : el
-    )
-
-    await apiControlRepository.updateRecord({api: req.ip}, {$set: {requestControl: updatedRequestControl}});
+    // const isHaveRecord = await apiControlRepository.getRecordByFilter({api: req.ip})
+    //
+    // if (!isHaveRecord) {
+    //     const newRecord: ApiRequestControlType = {
+    //         api: req.ip,
+    //         requestControl: [{
+    //             endpoint: req.originalUrl,
+    //             amountTry: 1,
+    //             lastEntryDate: new Date()
+    //         }]
+    //     }
+    //     await apiControlRepository.createRecord(newRecord)
+    //     return next()
+    // }
+    //
+    // const isHaveEndpoint = isHaveRecord.requestControl.find(el => el.endpoint === req.originalUrl)
+    //
+    // if (!isHaveEndpoint) {
+    //     isHaveRecord.requestControl.push({
+    //         endpoint: req.originalUrl,
+    //         amountTry: 1,
+    //         lastEntryDate: new Date()
+    //     })
+    //
+    //     await apiControlRepository.updateRecord({api: req.ip}, {$set: {requestControl: isHaveRecord.requestControl}})
+    //     return next()
+    // }
+    //
+    // const isEnoughTimeForNextTry = isCheckLastDate(isHaveEndpoint.lastEntryDate);
+    //
+    // if (isHaveEndpoint.amountTry >= CONTROL_SETTINGS.AMOUNT_TRY && isEnoughTimeForNextTry) {
+    //     return res.sendStatus(HTTP_STATUSES.TOO_MANY_REQUESTS_429)
+    // }
+    //
+    // const updatedRequestControl = isHaveRecord.requestControl.map(el => el.endpoint === req.originalUrl
+    //     ? {...el, amountTry: isEnoughTimeForNextTry ? ++el.amountTry : 1,  lastEntryDate: isEnoughTimeForNextTry ? el.lastEntryDate : new Date()}
+    //     : el
+    // )
+    //
+    // await apiControlRepository.updateRecord({api: req.ip}, {$set: {requestControl: updatedRequestControl}});
 
     next();
 };
