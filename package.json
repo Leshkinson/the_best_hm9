@@ -21,6 +21,7 @@
     "jsonwebtoken": "^9.0.0",
     "moment": "^2.29.4",
     "mongodb": "^5.1.0",
+    "node-cache": "^5.1.2",
     "nodemailer": "^6.9.1",
     "supertest": "^6.3.3",
     "ts-jest": "^29.0.5",
