@@ -23,7 +23,7 @@ export const jwtService = {
 
     async createRefreshToken(user: any, deviceId: string) {
         const payload = refreshTokenParser.pars(user.id, deviceId)
-        const refreshToken = jwt.sign({payload}, refreshTokenSecret, {expiresIn: '100s'});
+        const refreshToken = jwt.sign({payload}, refreshTokenSecret, {expiresIn: '20s'});
         return {refreshToken}
     },
 
