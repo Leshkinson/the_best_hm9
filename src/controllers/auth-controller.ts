@@ -35,8 +35,10 @@ export const authController = {
             const {userId, deviceId} = decodedOldToken
             const lastActiveDate = new Date().toISOString()
             const [accessToken, refreshNewToken] = await authService.refreshToken(userId, refreshToken, deviceId)
+            console.log('test refreshNewToken', refreshNewToken)
             // @ts-ignore
             const {lastUpdateDate} = await jwtService.decodeReFreshToken(refreshNewToken.refreshToken)
+            console.log('Test lastUpdateDate', lastUpdateDate)
             await securityDevicesRepository.updateSession({deviceId}, {$set: {lastUpdateDate, lastActiveDate}})
             return res.status(HTTP_STATUSES.OK200).cookie('refreshToken', refreshNewToken, {
                 httpOnly: true,

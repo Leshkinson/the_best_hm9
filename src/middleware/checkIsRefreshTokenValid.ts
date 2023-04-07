@@ -16,7 +16,7 @@ export const checkIsRefreshTokenValid = async (req: Request, res: Response, next
     }
 
     const {deviceId, lastUpdateDate} = decodedToken
-
+    console.log('test Middleware ', decodedToken)
     const isHaveSession = await securityDevicesRepository.getAllUserSessions({deviceId})
 
     if(!isHaveSession || isHaveSession[0].lastUpdateDate !== lastUpdateDate){
