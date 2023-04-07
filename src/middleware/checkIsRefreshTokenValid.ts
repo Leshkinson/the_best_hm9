@@ -19,7 +19,7 @@ export const checkIsRefreshTokenValid = async (req: Request, res: Response, next
     console.log('test Middleware ', decodedToken)
     const isHaveSession = await securityDevicesRepository.getAllUserSessions({deviceId})
 
-    if(!isHaveSession || isHaveSession[0].lastUpdateDate !== lastUpdateDate){
+    if(!isHaveSession.length || isHaveSession[0].lastUpdateDate !== lastUpdateDate){
         return res.sendStatus(HTTP_STATUSES.UNAUTHORIZED_401);
     }
 
