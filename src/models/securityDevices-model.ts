@@ -5,7 +5,7 @@ export const securityDevicesModel = (session: any) => {
             ip: session.ip,
             title: session.title,
             lastActiveDate: session.lastActiveDate,
-            createdAt: session.deviceId
+            deviceId: session.deviceId
         }
     }
 

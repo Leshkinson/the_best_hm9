@@ -11,7 +11,6 @@ export const securityDevicesService = {
             const {userId} = decodedToken
             const filter = {userId}
             const sessions =  await securityDevicesRepository.getAllUserSessions(filter)
-            console.log('sessions in service', sessions)
             return securityDevicesModel(sessions)
         }
       return null
