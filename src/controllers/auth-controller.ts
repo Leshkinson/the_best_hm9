@@ -67,8 +67,8 @@ export const authController = {
         const decodedToken = await jwtService.decodeReFreshToken(refreshToken)
 
         if (decodedToken) {
-            const {deviceId} = decodedToken
-            await securityDevicesService.removeSession(deviceId)
+            const {deviceId, userId} = decodedToken
+            await securityDevicesService.removeSession(deviceId, userId)
             return res.clearCookie('refreshToken').sendStatus(HTTP_STATUSES.NO_CONTENT_204)
         }
 
