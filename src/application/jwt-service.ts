@@ -5,7 +5,10 @@ const refreshTokenSecret = '333'
 
 const refreshTokenParser = {
     pars(userId: string, deviceId: string) {
-        return `${userId}_${deviceId}`
+        return {
+            userId: userId,
+            deviceId: deviceId
+        }
     },
 
     decoded(token: string) {
@@ -23,7 +26,7 @@ export const jwtService = {
 
     async createRefreshToken(user: any, deviceId: string) {
         const payload = refreshTokenParser.pars(user.id, deviceId)
-        const refreshToken = jwt.sign({payload}, refreshTokenSecret, {expiresIn: '100s'});
+        const refreshToken = jwt.sign(payload, refreshTokenSecret, {expiresIn: '100s'});
         return {refreshToken}
     },
 
@@ -41,9 +44,10 @@ export const jwtService = {
 
             const result: any = jwt.verify(token, refreshTokenSecret)
 
-            const [userId, deviceId] = refreshTokenParser.decoded(result.payload)
+            const payload = jwt.decode(token)
             return {
-               lastUpdateDate: result.iat, userId, deviceId
+                // @ts-ignore
+               lastUpdateDate: result.iat, userId: payload?.userId, deviceId: payload.deviceId
             }
         } catch (error) {
 
