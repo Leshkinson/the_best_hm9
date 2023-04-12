@@ -10,22 +10,17 @@ export const checkIsRefreshTokenValid = async (req: Request, res: Response, next
     if (!refreshToken) {
         return res.sendStatus(HTTP_STATUSES.UNAUTHORIZED_401);
     }
-    console.log('refreshToken', refreshToken)
-    console.log('here1')
     const decodedToken = await jwtService.decodeReFreshToken(refreshToken.refreshToken)
 
     if (!decodedToken) {
         return res.sendStatus(HTTP_STATUSES.UNAUTHORIZED_401);
     }
-    console.log('here2')
     const {deviceId, lastUpdateDate} = decodedToken
 
     const isHaveSession = await securityDevicesRepository.getAllUserSessions({deviceId})
 
     if(!isHaveSession.length || isHaveSession[0].lastUpdateDate !== lastUpdateDate){
-        console.log('here3')
         return res.sendStatus(HTTP_STATUSES.UNAUTHORIZED_401);
     }
-    console.log('here4')
     return  next();
 };

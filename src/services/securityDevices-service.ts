@@ -26,8 +26,18 @@ export const securityDevicesService = {
          return null
     },
 
-    async removeSession(deviceId: string, userId: string): Promise<boolean> {
-        const filter = {deviceId, userId}
-        return await securityDevicesRepository.removeSession(filter)
+    async removeSession(deviceId: string, userId: string): Promise<string> {
+        const filter = {deviceId}
+        const session = await securityDevicesRepository.getSession(filter)
+
+        if(!session){
+            return 'not_found'
+        }
+        if(session.userId !== userId){
+            return 'forbidden'
+        }
+        await securityDevicesRepository.removeSession(filter)
+        return 'success'
     },
+
 }

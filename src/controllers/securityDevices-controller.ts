@@ -26,8 +26,20 @@ export const securityDevicesController = {
         const {refreshToken} = req.cookies.refreshToken;
         // @ts-ignore
         const { userId } = await jwtService.decodeReFreshToken(refreshToken)
-        const isRemoveSession = await securityDevicesService.removeSession(req.params.id, userId)
-      return  isRemoveSession ? res.sendStatus(HTTP_STATUSES.NO_CONTENT_204) : res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+        const isRemoveSessionStatus = await securityDevicesService.removeSession(req.params.id, userId)
+        switch (isRemoveSessionStatus) {
+            case "not_found":
+                res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+                break
+            case "forbidden":
+                res.sendStatus(HTTP_STATUSES.FORBIDDEN_403)
+                break
+            case "success":
+                res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
+                break
+            default:
+              break
+        }
     },
 
 }

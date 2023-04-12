@@ -41,7 +41,6 @@ export const jwtService = {
 
     async decodeReFreshToken(token: string) {
         try {
-
             const result: any = jwt.verify(token, refreshTokenSecret)
 
             const payload = jwt.decode(token)

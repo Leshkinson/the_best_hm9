@@ -7,6 +7,10 @@ export const securityDevicesRepository = {
         return await sessionsCollections.find(filter).toArray();
     },
 
+    async getSession(filter: any): Promise<any> {
+        return await sessionsCollections.findOne(filter)
+    },
+
     async addedSession(session: any) {
         await sessionsCollections.insertOne(session)
     },
@@ -15,9 +19,8 @@ export const securityDevicesRepository = {
         await sessionsCollections.updateOne(filter, session)
     },
 
-    async removeSession(filter: any):Promise<boolean> {
-        const result = await sessionsCollections.deleteOne(filter)
-        return result.deletedCount === 1
+    async removeSession(filter: any):Promise<void> {
+       await sessionsCollections.deleteOne(filter)
     },
 
     async removeOtherSessions(filter: any) {
