@@ -1,6 +1,7 @@
 import {Request, Response} from "express";
 import {securityDevicesService} from "../services/securityDevices-service";
 import {HTTP_STATUSES} from "../http_statuses";
+import {jwtService} from "../application/jwt-service";
 
 
 export const securityDevicesController = {
@@ -22,7 +23,10 @@ export const securityDevicesController = {
     },
 
     async removeSession(req: Request, res: Response) {
-        const isRemoveSession = await securityDevicesService.removeSession(req.params.id)
+        const {refreshToken} = req.cookies.refreshToken;
+        // @ts-ignore
+        const { userId } = await jwtService.decodeReFreshToken(refreshToken)
+        const isRemoveSession = await securityDevicesService.removeSession(req.params.id, userId)
       return  isRemoveSession ? res.sendStatus(HTTP_STATUSES.NO_CONTENT_204) : res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
     },
 

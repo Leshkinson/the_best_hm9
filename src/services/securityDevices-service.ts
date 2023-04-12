@@ -26,8 +26,8 @@ export const securityDevicesService = {
          return null
     },
 
-    async removeSession(deviceId: string): Promise<boolean> {
-        const filter = {deviceId}
+    async removeSession(deviceId: string, userId: string): Promise<boolean> {
+        const filter = {deviceId, userId}
         return await securityDevicesRepository.removeSession(filter)
     },
 }
