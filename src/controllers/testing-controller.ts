@@ -11,8 +11,6 @@ import {Request, Response} from "express";
 export const testingController = {
 
     async clearDB() {
-        const allSession = await securityDevicesRepository.getAllUserSessions({})
-        console.log('не заебумба', allSession)
         await blogRepository.deleteAllBlogs()
         await postRepository.deleteAllPosts()
         await userRepository.deleteAllUser()

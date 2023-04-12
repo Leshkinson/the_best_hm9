@@ -6,15 +6,15 @@ import {HTTP_STATUSES} from "../http_statuses";
 export const securityDevicesController = {
 
     async getAllActiveSessions(req: Request, res: Response) {
-        try {
-            const {refreshToken} = req.cookies.refreshToken;
-            const sessions = await securityDevicesService.getActiveSessions(refreshToken)
-            throw new Error()
-            return res.status(HTTP_STATUSES.OK200).json(sessions)
-        } catch (error) {
-            console.log('error', error)
-            return res.sendStatus(HTTP_STATUSES.UNAUTHORIZED_401);
-        }
+        // try {
+        //     const {refreshToken} = req.cookies.refreshToken;
+        //     const sessions = await securityDevicesService.getActiveSessions(refreshToken)
+        //     return res.status(HTTP_STATUSES.OK200).json(sessions)
+        // } catch (error) {
+        //     console.log('error', error)
+        //     return res.sendStatus(HTTP_STATUSES.UNAUTHORIZED_401);
+        // }
+        res.sendStatus(505)
     },
 
     async removeOtherSessions(req: Request, res: Response) {
